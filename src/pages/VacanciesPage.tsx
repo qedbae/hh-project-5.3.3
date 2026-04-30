@@ -10,6 +10,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import type { AppDispatch } from '../store/store'
 import { setPage, setSearch, setCity } from '../store/vacanciesSlice'
 import { fetchVacancies } from '../store/vacanciesSlice'
+import { useSearchParams } from 'react-router-dom'
 
 
 function VacanciesPage() {
@@ -21,12 +22,15 @@ function VacanciesPage() {
     const { loading, error } = useSelector((state: RootState) => state.vacancies)
     const city = useSelector((state: RootState) => state.vacancies.city)
 
-    const [skills, setSkills] = useState<string[]>([
-        'TypeScript',
-        'React',
-        'Redux'
-    ])
-    
+    const [searchParams, setSearchParams] = useSearchParams()
+
+    const skillsParam = searchParams.get('skills')
+    const [skills, setSkills] = useState<string[]>(
+        skillsParam
+            ? skillsParam.split(',')
+            : ['TypeScript', 'React', 'Redux']
+        )
+
     const itemsPerPage = 10
 
     const filteredVacancies = vacancies.filter(vacancy => {
@@ -63,6 +67,43 @@ function VacanciesPage() {
         dispatch(setPage(1))
     }, [search, city])
 
+    useEffect(() => {
+        const searchParam = searchParams.get('search') || ''
+        const cityParam = searchParams.get('city')
+
+        if (searchParam) {
+            dispatch(setSearch(searchParam))
+        }
+
+        if (cityParam) {
+            dispatch(setCity(cityParam))
+        }
+        
+    }, [])
+
+    useEffect(() => {
+        const skillsParam = searchParams.get('skills')
+        if(!skillsParam && skills.length > 0) {
+            setSearchParams((prev) => {
+                const params = new URLSearchParams(prev)
+                params.set('skills', skills.join(','))
+                return params
+            })
+        }
+    }, [skills])
+
+    useEffect(() => {
+        const skillsParam = searchParams.get('skills')
+
+            if (skillsParam) {
+            const parsed = skillsParam.split(',')
+
+            if(parsed.join(',') !== skills.join(',')) {
+            setSkills(parsed)
+            }
+        }
+    }, [searchParams])
+
     return (
         <>
         <Header />
@@ -73,7 +114,19 @@ function VacanciesPage() {
                     <Text size='xl' fw={700}>Список вакансий </Text>
                     <Text size='md' fw={500} c='dimmed'>по профессии Frontend-разработчик</Text>
                 </Flex>
-                <SearchBar value={search} onChange={(value) => dispatch(setSearch(value))}/>
+                <SearchBar value={search} 
+                onChange={(value) => {
+                    dispatch(setSearch(value))
+                    setSearchParams((prev) => {
+                        const params = new URLSearchParams(prev)
+                        if(value) {
+                            params.set('search', value)
+                        } else {
+                            params.delete('search')
+                        }
+                        return params
+                    })
+                }}/>
             </Flex>
         </Container>
         <Divider style={{ opacity: 0.2 }}/>
@@ -82,10 +135,35 @@ function VacanciesPage() {
                 <Flex direction='column'>
                     <KeySkillsInput
                     skills={skills}
-                    setSkills={setSkills} />
+                    setSkills={(value) =>{
+                        const newSkills = typeof value === 'function' ? 
+                        value(skills) : value
+
+                        setSkills(newSkills)
+                        setSearchParams((prev) => {
+                        const params = new URLSearchParams(prev)
+                        if(newSkills.length > 0) {
+                            params.set('skills', newSkills.join(','))
+                        } else {
+                            params.delete('skills')
+                        }
+                        return params
+                        })
+                    }} />
                     <FilterSidebar 
                     selectedCity={city}
-                    onChange={(value) => dispatch(setCity(value))}/>
+                    onChange={(value) => {
+                        dispatch(setCity(value))
+                        setSearchParams((prev) => {
+                        const params = new URLSearchParams(prev)
+                        if(value) {
+                            params.set('city', value)
+                        } else {
+                            params.delete('city')
+                        }
+                        return params
+                        })
+                    }}/>
                 </Flex>
                 <Flex direction='column' gap='md' 
                 style={{flex: 1}}>

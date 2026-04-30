@@ -20,4 +20,8 @@ export type Vacancy = {
     }
     alternate_url: string
     skills?: string[]
+    snippet?: {
+        about_company: string
+        about_project: string
+    }
 }

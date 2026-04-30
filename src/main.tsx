@@ -6,13 +6,16 @@ import './index.css'
 import App from './App.tsx'
 import { Provider } from 'react-redux'
 import { store } from './store/store'
+import { BrowserRouter } from 'react-router-dom'
 
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store = {store}>
       <MantineProvider>
-        <App />
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
       </MantineProvider>
     </Provider>
   </StrictMode>,
