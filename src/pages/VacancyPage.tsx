@@ -14,7 +14,7 @@ function VacancyPage() {
     const vacancy = vacancies.find(vac => vac.id === id)
 
     if (!vacancy) {
-        return <div>Вакансия не найдена</div>
+        throw new Error('Вакансия не найдена')
     }
     
     return (

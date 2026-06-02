@@ -1,6 +1,5 @@
 import Header from '../components/Header/Header'
 import SearchBar from '../components/TitleSeachSection/SearchBar'
-import FilterSidebar from '../components/FilterSidebar/FilterSideBar'
 import VacancyCard from '../components/VacancyCard/VacancyCard'
 import { Text, Flex, Container, Divider, Pagination, Box } from '@mantine/core'
 import { useEffect, useState } from 'react'
@@ -8,19 +7,27 @@ import KeySkillsInput from '../components/KeySkillsInput/KeySkillsInput'
 import type { RootState } from '../store/store'
 import { useSelector, useDispatch } from 'react-redux'
 import type { AppDispatch } from '../store/store'
-import { setPage, setSearch, setCity } from '../store/vacanciesSlice'
+import { setPage, setSearch } from '../store/vacanciesSlice'
 import { fetchVacancies } from '../store/vacanciesSlice'
 import { useSearchParams } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { Tabs } from '@mantine/core'
 
 
 function VacanciesPage() {
     const dispatch = useDispatch<AppDispatch>()
 
+    const location = useLocation()
+    const navigate = useNavigate()
+
+    const currentTab = location.pathname.includes('moscow')
+    ? 'moscow'
+    : 'petersburg'
+
     const vacancies = useSelector((state: RootState) => state.vacancies.vacancies)
     const page = useSelector((state: RootState) => state.vacancies.page)
     const search = useSelector((state: RootState) => state.vacancies.search)
     const { loading, error } = useSelector((state: RootState) => state.vacancies)
-    const city = useSelector((state: RootState) => state.vacancies.city)
 
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -40,8 +47,12 @@ function VacanciesPage() {
             vacancy.name.toLowerCase().includes(query) ||
             vacancy.employer.name.toLowerCase().includes(query)
         
-        const matchesCity = 
-            !city || vacancy.area.name === city
+        const selectCity = 
+            currentTab === 'moscow'
+            ? 'Москва'
+            : 'Санкт-Петербург'
+        
+        const matchesCity = vacancy.area.name === selectCity
 
         const matchesSkills = 
             skills.length === 0 ||
@@ -65,18 +76,13 @@ function VacanciesPage() {
     
     useEffect(() => {
         dispatch(setPage(1))
-    }, [search, city])
+    }, [search])
 
     useEffect(() => {
         const searchParam = searchParams.get('search') || ''
-        const cityParam = searchParams.get('city')
 
         if (searchParam) {
             dispatch(setSearch(searchParam))
-        }
-
-        if (cityParam) {
-            dispatch(setCity(cityParam))
         }
         
     }, [])
@@ -150,23 +156,20 @@ function VacanciesPage() {
                         return params
                         })
                     }} />
-                    <FilterSidebar 
-                    selectedCity={city}
-                    onChange={(value) => {
-                        dispatch(setCity(value))
-                        setSearchParams((prev) => {
-                        const params = new URLSearchParams(prev)
-                        if(value) {
-                            params.set('city', value)
-                        } else {
-                            params.delete('city')
-                        }
-                        return params
-                        })
-                    }}/>
                 </Flex>
                 <Flex direction='column' gap='md' 
                 style={{flex: 1}}>
+                    <Tabs 
+                        value={currentTab}
+                        onChange={(value) => {
+                        navigate(`/vacancies/${value}`)
+                        }}
+                    >
+                        <Tabs.List w='fit-content'>
+                            <Tabs.Tab value='moscow'>Москва</Tabs.Tab>
+                            <Tabs.Tab value='petersburg'>Санкт-Петербург</Tabs.Tab>
+                        </Tabs.List>   
+                    </Tabs>
                 {loading && <Text>Загрузка</Text>}
                 {error && <Text c='red'>{error}</Text>}
 
@@ -174,6 +177,7 @@ function VacanciesPage() {
                     <VacancyCard key={vacancy.id} vacancy={vacancy}/>
                 ))}
                 </Flex>
+                
             </Flex>
         </Container>
         <Flex justify='center' py='md'>
