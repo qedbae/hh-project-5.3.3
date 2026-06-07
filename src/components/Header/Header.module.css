@@ -1,0 +1,23 @@
+
+.link {
+    text-decoration: none;
+    color: #0F0F1080;
+}
+
+.active-link {
+    color: #0F0F10;
+    text-decoration: none;
+}
+
+.dot-active {
+    color: #4263EB;
+    margin-left: 4px;
+}
+
+.avatar {
+    opacity: 0.5;
+}
+
+.avatar_active {
+    opacity: 1;
+}

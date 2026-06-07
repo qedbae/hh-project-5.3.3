@@ -32,7 +32,6 @@ function VacancyPage() {
     
     return (
         <>
-        <Header/>
         <Box bg='#F6F6F7' style={{ minHeight: '100vh' }}>
             <Container size='sm'>
                 <Flex direction='column' align='stretch'>

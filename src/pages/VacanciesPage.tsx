@@ -112,7 +112,6 @@ function VacanciesPage() {
 
     return (
         <>
-        <Header />
         <Box bg='#F6F6F7'>
         <Container size='md' px={0} py='md'>
             <Flex justify='space-between' align='center'>
