@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: process.env.NODE_ENV === 'production' ? '/hh-project-5.2.9/' : '/',
+  base: process.env.NODE_ENV === 'production' ? '/hh-project-5.3.3/' : '/',
   plugins: [react()],
   test: {
     environment: 'jsdom',

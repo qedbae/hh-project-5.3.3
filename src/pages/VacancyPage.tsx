@@ -1,7 +1,6 @@
 import { type AppDispatch, type RootState } from '../store/store';
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import Header from '../components/Header/Header';
 import VacancyCard from '../components/VacancyCard/VacancyCard';
 import { Flex, Container, Box } from '@mantine/core';
 import CompanyInfo from '../components/CompanyInfo/CompanyInfo';

@@ -1,4 +1,3 @@
-import Header from '../components/Header/Header'
 import SearchBar from '../components/TitleSeachSection/SearchBar'
 import VacancyCard from '../components/VacancyCard/VacancyCard'
 import { Text, Flex, Container, Divider, Pagination, Box } from '@mantine/core'
