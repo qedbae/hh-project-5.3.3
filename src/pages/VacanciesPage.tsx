@@ -111,7 +111,7 @@ function VacanciesPage() {
 
     return (
         <>
-        <Box bg='#F6F6F7'>
+        <Box bg='#F6F6F7' style={{minHeight: '100vh'}}>
         <Container size='md' px={0} py='md'>
             <Flex justify='space-between' align='center'>
                 <Flex direction='column'>
@@ -160,7 +160,8 @@ function VacanciesPage() {
                     <Tabs 
                         value={currentTab}
                         onChange={(value) => {
-                        navigate(`/vacancies/${value}`)
+                        navigate(
+                            `/vacancies/${value}?${searchParams.toString()}`)
                         }}
                     >
                         <Tabs.List w='fit-content'>
